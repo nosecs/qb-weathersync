@@ -40,19 +40,19 @@ end)
 
 RegisterNetEvent('qb-weathersync:client:RequestCommands', function(isAllowed)
     if isAllowed then
-        TriggerEvent('chat:addSuggestion', '/freezetime', Lang:t('help.freezecommand'), {})
-        TriggerEvent('chat:addSuggestion', '/freezeweather', Lang:t('help.freezeweathercommand'), {})
-        TriggerEvent('chat:addSuggestion', '/weather', Lang:t('help.weathercommand'), {
-            { name=Lang:t('help.weathertype'), help=Lang:t('help.availableweather') }
+        TriggerEvent('chat:addSuggestion', '/freezetime', _U('help_freezecommand'), {})
+        TriggerEvent('chat:addSuggestion', '/freezeweather', _U('help_freezeweathercommand'), {})
+        TriggerEvent('chat:addSuggestion', '/weather', _U('help_weathercommand'), {
+            { name=_U('help_weathertype'), help=_U('help_availableweather') }
         })
-        TriggerEvent('chat:addSuggestion', '/blackout', Lang:t('help.blackoutcommand'), {})
-        TriggerEvent('chat:addSuggestion', '/morning', Lang:t('help.morningcommand'), {})
-        TriggerEvent('chat:addSuggestion', '/noon', Lang:t('help.nooncommand'), {})
-        TriggerEvent('chat:addSuggestion', '/evening', Lang:t('help.eveningcommand'), {})
-        TriggerEvent('chat:addSuggestion', '/night', Lang:t('help.nightcommand'), {})
-        TriggerEvent('chat:addSuggestion', '/time', Lang:t('help.timecommand'), {
-            { name=Lang:t('help.timehname'), help=Lang:t('help.timeh') },
-            { name=Lang:t('help.timemname'), help=Lang:t('help.timem') }
+        TriggerEvent('chat:addSuggestion', '/blackout', _U('help_blackoutcommand'), {})
+        TriggerEvent('chat:addSuggestion', '/morning', _U('help_morningcommand'), {})
+        TriggerEvent('chat:addSuggestion', '/noon', _U('help_nooncommand'), {})
+        TriggerEvent('chat:addSuggestion', '/evening', _U('help_eveningcommand'), {})
+        TriggerEvent('chat:addSuggestion', '/night', _U('help_nightcommand'), {})
+        TriggerEvent('chat:addSuggestion', '/time', _U('help_timecommand'), {
+            { name=_U('help_timehname'), help=_U('help_timeh') },
+            { name=_U('help_timemname'), help=_U('help_timem') }
         })
     end
 end)
@@ -126,3 +126,38 @@ CreateThread(function()
         end
     end
 end)
+
+
+--[[
+local QBCore = exports['qb-core']:GetCoreObject()
+
+
+Citizen.CreateThread(function()
+	while true do
+		local ped = GetPlayerPed(-1)
+		local veh = GetVehiclePedIsIn(ped)
+		local class = GetVehicleClass(veh)
+		
+		if class == 15 then
+			if CurrentWeather == 'THUNDER' then
+				SetHelicopterRollPitchYawMult(veh, 0.1)
+				SetHeliTurbulenceScalar(veh, 0.1)
+				if math.random(1, 5) == 1 then
+					local health = GetVehicleEngineHealth(veh)
+					SetVehicleEngineHealth(veh, (health * 0.8))
+					QBCore.Functions.Notify("You have been struck by lightning")
+					QBCore.Functions.Notify(health)
+					if health <= 200 then
+						SetVehicleEngineHealth(veh, 0)
+					end
+				end
+			else
+				SetHelicopterRollPitchYawMult(veh, 0.9)
+				SetHeliTurbulenceScalar(veh, 0.9)
+			end
+		end
+		Wait(1000)
+	end
+end)
+
+--]]
